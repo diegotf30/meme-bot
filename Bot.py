@@ -4,7 +4,7 @@ import linecache
 
 home_dir = os.path.dirname(os.path.realpath(__file__))
 temp_dir = home_dir + '\\Templates\\'
-source_dir = home_dir + '\\Source\\'
+source_dir = home_dir + '\\Source Images\\'
 memes_dir = home_dir + '\\Memes\\'
 
 secure_random = random.SystemRandom()
