@@ -21,6 +21,9 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
 
     Although not necessary, I recommend you to number the source images to easily identify the source images used in a given meme, since its filename is made using the format: `Template-SrcImg1-SrcImg2-...-SrcImgN.png` 
     
+* Dependencies
+
+    For the script to work you must have `Pillow` (a friendly PIL fork). You can install it using `pip install Pillow` or with `easy_install Pillow`. For more information on its documentation/installation go [here](http://pillow.readthedocs.io/en/stable/installation.html).
     
 And ta-da! You're ready to make some dank -but most importantly- ***randomly generated*** memes. Have fun!
     
