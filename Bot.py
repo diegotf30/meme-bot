@@ -13,18 +13,43 @@ memes_dir = home_dir + '\\Memes\\'
 rand_temp = random.choice(os.listdir(temp_dir))
 rand_source = random.choice(os.listdir(source_dir))
 
+#Get template number
+size_lst = re.findall(r'\d+', rand_temp) #workaround
+size_index = int(''.join(size_lst)) + 2
+#Retrieve box size from file
+size_s = linecache.getline('sizes.txt',size_index)
+#Blank Area Properties
+size_x = int(size_s.split()[1])
+size_y = int(size_s.split()[2])
+
 #template
 bot = Image.open(temp_dir + rand_temp)
 
 #source image
-top = Image.open(source_dir + rand_source) 
+top = Image.open(source_dir + rand_source)
 
-width, height = bot.size
-size = (width, height)
+#Resizes image to keep aspect ratio
+##Shrink
+if top.size[0] > size_x & top.size[1] > size_y :
+    top.thumbnail((size_x,size_y), Image.LANCZOS)
+##Enlarge
+else:
+    hpercent = (size_y / float(top.size[1])) #Magia pt. 1
+    wsize = int((float(top.size[0]) * float(hpercent))) #Magia 2: The Awakening
+    top = top.resize((wsize, size_y)) #Magia 3: Revenge of the Syntax
+
+#Source Image Width
+width = top.size[0]
+#Blank Area - Source Image Width
+black_area = size_x - width 
+#Coordinates where image is pasted
+x = int(size_s.split()[3])
+y = int(size_s.split()[4])
 
 #Puts Source image in template
-meme = ImageOps.fit(top, size, Image.ANTIALIAS)
-meme.paste(bot, (0,0), bot)
+bot.paste(top, (int(x + black_area/2),y))
 char_set = string.ascii_uppercase + string.digits
-meme.save( memes_dir + ''.join(random.sample(char_set*6, 6)) + '.png')
-meme.show()
+bot.save(memes_dir + ''.join(random.sample(char_set*6, 6)) + '.png')
+
+
+
