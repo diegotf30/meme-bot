@@ -4,7 +4,9 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
 ## Instructions: 
 * To add a template:
 
-    In `sizes.txt` the legend goes as follows:
+    You must **manually** capture the box where each source image will be pasted, inside `sizes.txt`
+
+    Inside `sizes.txt` the legend goes as follows:
     * `bg_col` = Background of the space where the source image is pasted. There are 3 options:
         * `b` = black background
         * `w` = white background
