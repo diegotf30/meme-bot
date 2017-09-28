@@ -36,4 +36,4 @@ And ta-da! You're ready to make some dank -but most importantly- ***randomly gen
 
 If you wish to integrate the bot with Twitter I recommend this [repository](https://github.com/joaquinlpereyra/twitterImgBot), although the non-repeating image validation doesn't work (16/09/2017). 
 
-My own fully-automated version: [@SnuppoBotto](https://twitter.com/SnuppoBotto)
+My own fully-automated version: [@OlaSoyUnBot_](https://twitter.com/OlaSoyUnBot_)
