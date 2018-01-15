@@ -4,7 +4,9 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
 ## Instructions: 
 * To add a template:
 
-    In `sizes.txt` the legend goes as follows:
+    You must **manually** capture the box where each source image will be pasted, inside `sizes.txt`
+
+    Inside `sizes.txt` the legend goes as follows:
     * `bg_col` = Background of the space where the source image is pasted. There are 3 options:
         * `b` = black background
         * `w` = white background
@@ -21,6 +23,9 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
 
     Although not necessary, I recommend you to number the source images to easily identify the source images used in a given meme, since its filename is made using the format: `Template-SrcImg1-SrcImg2-...-SrcImgN.png` 
     
+* Dependencies
+
+    For the script to work you must have `Pillow` (a friendly PIL fork). You can install it using `pip install Pillow` or with `easy_install Pillow`. For more information on its documentation/installation go [here](http://pillow.readthedocs.io/en/stable/installation.html).
     
 And ta-da! You're ready to make some dank -but most importantly- ***randomly generated*** memes. Have fun!
     
@@ -31,4 +36,4 @@ And ta-da! You're ready to make some dank -but most importantly- ***randomly gen
 
 If you wish to integrate the bot with Twitter I recommend this [repository](https://github.com/joaquinlpereyra/twitterImgBot), although the non-repeating image validation doesn't work (16/09/2017). 
 
-My own fully-automated version: [@SnuppoBotto](https://twitter.com/SnuppoBotto)
+My own fully-automated version: [@OlaSoyUnBot_](https://twitter.com/OlaSoyUnBot_)
