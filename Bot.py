@@ -1,13 +1,15 @@
-from PIL import Image
-import os
-import json
-import random
 from ast import literal_eval as make_tuple
+from PIL import Image
+import random
+import json
+import os
+
 
 home_dir = os.path.dirname(os.path.realpath(__file__))
 temp_dir = home_dir + '\\Templates\\'
 source_dir = home_dir + '\\Source\\'
 memes_dir = home_dir + '\\Memes\\'
+meme_log = home_dir + '\\log'
 
 with open('sizes.json') as sizes:
     jsonData = json.load(sizes)
@@ -22,45 +24,60 @@ temp_num = rand_temp.split('.')[0]
 temp = Image.open(temp_dir + rand_temp)
 # Contains background color and box sizes
 tempInfo = jsonData[temp_num]
-
 # Background colour
-# #b - black
-# #w - white
-# #o - over (pasted over image, no bg)
 bg_color = tempInfo['background']
 
+# b - black
 if bg_color == 'b' :
     colour = 0
+# w - white
 elif bg_color == 'w' :
     colour = (255, 255, 255, 0)
 
-# Background
+# o - over (pasted over image, no bg)
 if bg_color != 'o' :
     backg = Image.new('RGB', temp.size, colour)
 else :
     backg = temp
 
-# Name for the file
-meme_name = temp_num.split(' ')
-
 # Counter for boxes
 n = 0
+# Gets all source images to be used in template (makes sure it's not a duplicated meme)
+while True :
+    source_imgs = []
 
-while n < len(tempInfo['boxes']) :
-    # Determines if the template repeats an image
-    if 'repeat_prev' not in tempInfo['boxes'] :
-        # Random source image (e.g. '98.png')
-        rand_source = secure_random.choice(os.listdir(source_dir))
+    for box in tempInfo['boxes'] :
+        # If image is repeated, no need to get another random src_img
+        if 'repeat_prev' not in tempInfo['boxes'][n] :
+            # Random source image (e.g. '98.png')
+            rand_source = secure_random.choice(os.listdir(source_dir))
+            source_index = rand_source.split('.')[0]
         # Random source index (e.g. '98')
-        meme_name.append(rand_source.split('.')[0])
-    
+        source_imgs.append(source_index)
+
+        n += 1
+
+    # Name for the file
+    meme_name = temp_num + '-' + '-'.join(source_imgs) + '.png'
+
+    # If meme duplicated, runs loop again (gets different src images)
+    with open(meme_log) as log :
+        for line in log :
+            if meme_name in line :
+                break
+        else :
+            break
+
+n = 0
+
+while n < len(source_imgs) :
     # Blank Area Properties
     size = make_tuple(tempInfo['boxes'][n]['size'])
     size_x = size[0]
     size_y = size[1]
 
     # source image
-    src = Image.open(source_dir + rand_source)
+    src = Image.open(source_dir + source_imgs[n] + '.png')
 
     # Resizes image AND keeps aspect ratio
     ## Shrink
@@ -74,9 +91,9 @@ while n < len(tempInfo['boxes']) :
 
         if src.size[0] > size_x  :
             wpercent = (size_x / float(src.size[0])) #Magic IV: A New Hope
-            hsize = int((float(src.size[1]) * float(wpercent))) #Magic 5: Wrath of Fam 
+            hsize = int((float(src.size[1]) * float(wpercent))) #Magic 5: Wrath of Fam
             src = src.resize((size_x, hsize)) #Magic 6: The Return of the Bug
-            
+
     # Coordinates of top left corner (where image is pasted)
     top_left = make_tuple(tempInfo['boxes'][n]['left_corner'])
     paste_x = top_left[0]
@@ -97,4 +114,4 @@ while n < len(tempInfo['boxes']) :
 if tempInfo['background'] != 'o' :
     backg.paste(temp, (0,0), temp)
 # Saves meme
-backg.save(memes_dir + '-'.join(meme_name) + '.png')
+backg.save(memes_dir + meme_name)
