@@ -11,12 +11,12 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
         * `b` = black background
         * `w` = white background
         * `o` = Over. Source Image is pasted on top of the template, there's no background
-    * `boxes` = Is a list of the dictionaries (box) that contains info for box
-    
-    Each box contains 2 keys that have tuples as values:
+    * `boxes` = Is a list of the dictionaries (box) that contains info for box.
+        
+        Each box contains 2 keys that have tuples as values:
         * `size` = Size of the box
         * `left_corner` = Coordinates for the top-left corner of the box 
-        * Note: if you want to repeat the same Source Image used before, but at different coordinates and/or size, you need to add a new key called `repeat_prev` with `True` value. This is used in `Templates/5.png`
+        * **Note**: if you want to repeat the same Source Image used before, but at different coordinates and/or size, you need to add a new key called `repeat_prev` with `True` value. This is used in `Templates/5.png`
     
 * Regarding Source Images:
 
