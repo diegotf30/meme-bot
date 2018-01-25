@@ -16,7 +16,7 @@ def getBackgroundColor(bg_info) :
 def getBackground(temp, tempInfo) :
     # Background color
     bg_info = tempInfo['background']
-    #If we're going not going to paste over image, we make an image of just b or w
+    # If we're going not going to paste over image, we make an image of just b or w
     if bg_info != 'o' :
         return Image.new('RGB', temp.size, getBackgroundColor(bg_info))
     else :
@@ -59,6 +59,8 @@ def getUniqueSources(tempInfo) :
 
 
 def make_meme(background, source_imgs, boxes, twitter_pic = None) :
+    """
+    Does the whole process of pasting random """
     n = 0
     while n < len(source_imgs) :
         # Box (Blank Area) Properties
@@ -102,6 +104,11 @@ def make_meme(background, source_imgs, boxes, twitter_pic = None) :
         background.paste(src, (int(paste_x + black_x/2), int(paste_y + black_y/2)))
         # Goes to next source image (if there is a space for it)
         n += 1
+
+    # Puts Template on top of background (when background color = b/w)
+    if tempInfo['background'] != 'o' :
+        background.paste(temp, (0,0), temp)
+
     return background
 
 if __name__ == "__main__" :
@@ -131,10 +138,6 @@ if __name__ == "__main__" :
     source_imgs, meme_name = getUniqueSources(tempInfo)
 
     meme = make_meme(background, source_imgs, tempInfo['boxes'])
-
-    # Puts Template on top of background (when background color = b/w)
-    if tempInfo['background'] != 'o' :
-        meme.paste(temp, (0,0), temp)
 
     # Saves meme
     meme.save(memes_dir + meme_name)
