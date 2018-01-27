@@ -18,6 +18,8 @@ A reversed engineered version of ShitpostBot 5000 using Pillow (PIL-fork)
         * `left_corner` = Coordinates for the top-left corner of the box 
         * **Note**: if you want to repeat the same Source Image used before, but at different coordinates and/or size, you need to add a new key called `repeat_prev` with `True` value. This is used in `Templates/5.png`
     
+**Side-note**: If you prefer the previously used [`sizes.txt` format](https://i.imgur.com/rLlIyhR.png) instead of the current `sizes.json`, you can use the current release along with a [script](https://gist.github.com/diegotf30/54c51ebad12ad90db19c365df0972392) I made to convert `sizes.txt` to JSON format.
+
 * Regarding Source Images:
 
     Although not necessary, I recommend you to number the source images to easily identify the source images used in a given meme, since its filename is made using the format: `Template-SrcImg1-SrcImg2-...-SrcImgN.png` 
