@@ -22,7 +22,7 @@ def getBackground(temp, tempInfo) :
     else :
         return temp
 
-def getUniqueSources(tempInfo) :
+def getUniqueSources(tempInfo, memes_dir) :
     """
     Gets all source images to be used in template
     (makes sure it's not a duplicated meme)"""
@@ -48,12 +48,8 @@ def getUniqueSources(tempInfo) :
         meme_name = temp_num + '-' + '-'.join(source_imgs) + '.png'
 
         # If meme duplicated, runs loop again (gets different src images)
-        with open(meme_log) as log :
-            for line in log :
-                if meme_name in line :
-                    break
-            else :
-                break
+        if not os.path.isfile(memes_dir + meme_name) :
+            break
 
     return source_imgs, meme_name
 
@@ -135,7 +131,7 @@ if __name__ == "__main__" :
 
     background = getBackground(temp, tempInfo)
 
-    source_imgs, meme_name = getUniqueSources(tempInfo)
+    source_imgs, meme_name = getUniqueSources(tempInfo, memes_dir)
 
     meme = make_meme(background, source_imgs, tempInfo['boxes'])
 
