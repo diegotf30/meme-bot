@@ -45,18 +45,18 @@ def getUniqueSources(tempInfo, memes_dir) :
             n += 1
 
         # Name for the file
-        meme_name = temp_num + '-' + '-'.join(source_imgs) + '.png'
+        filename = temp_num + '-' + '-'.join(source_imgs) + '.png'
 
-        # If meme duplicated, runs loop again (gets different src images)
-        if not os.path.isfile(memes_dir + meme_name) :
+        # If meme hasn't been done before, we continue with meme-making process
+        if not os.path.isfile(os.path.join(memes_dir, filename)) :
             break
 
-    return source_imgs, meme_name
+    return source_imgs, filename
 
 
-def make_meme(background, source_imgs, boxes, twitter_pic = None) :
-    """
-    Does the whole process of pasting random """
+def make_meme(background, template, tempInfo, source_imgs) :
+    boxes = tempInfo['boxes']
+    bg_color = tempInfo['background']
     n = 0
     while n < len(source_imgs) :
         # Box (Blank Area) Properties
@@ -64,26 +64,22 @@ def make_meme(background, source_imgs, boxes, twitter_pic = None) :
         size_x = size[0]
         size_y = size[1]
 
-        # Source image
-        if twitter_pic is None :
-            src = Image.open(source_dir + source_imgs[n] + '.png')
-        else :
-            src = twitter_pic
+        src = Image.open(os.path.join(source_dir, f'{source_imgs[n]}.png'))
 
         # Resizes image AND keeps aspect ratio
         ## Shrink
         if src.size[0] > size_x or src.size[1] > size_y :
-            src.thumbnail((size_x,size_y), Image.LANCZOS)
+            src.thumbnail((size_x, size_y), Image.LANCZOS)
         ## Enlarge
         else :
-            hpercent = (size_y / float(src.size[1])) #Magic pt. 1
-            wsize = int((float(src.size[0]) * float(hpercent))) #Magic 2: The Awakening
-            src = src.resize((wsize, size_y)) #Magic 3: Revenge of the Syntax
+            hpercent = (size_y / float(src.size[1]))  # Magic pt. 1
+            wsize = int((float(src.size[0]) * float(hpercent)))  # Magic 2: The Awakening
+            src = src.resize((wsize, size_y))  # Magic 3: Revenge of the Syntax
 
             if src.size[0] > size_x  :
-                wpercent = (size_x / float(src.size[0])) #Magic IV: A New Hope
-                hsize = int((float(src.size[1]) * float(wpercent))) #Magic 5: Wrath of Fam
-                src = src.resize((size_x, hsize)) #Magic 6: The Return of the Bug
+                wpercent = (size_x / float(src.size[0]))  # Magic IV: A New Hope
+                hsize = int((float(src.size[1]) * float(wpercent)))  # Magic 5: Wrath of Fam
+                src = src.resize((size_x, hsize))  # Magic 6: The Return of the Bug
 
         # Coordinates of top left corner (where image is pasted)
         top_left = make_tuple(boxes[n]['left_corner'])
@@ -97,43 +93,43 @@ def make_meme(background, source_imgs, boxes, twitter_pic = None) :
         black_x = size_x - width
         black_y = size_y - height
         # Pastes centered Source Image in Template
-        background.paste(src, (int(paste_x + black_x/2), int(paste_y + black_y/2)))
+        background.paste(src, (int(paste_x + black_x / 2), int(paste_y + black_y / 2)))
         # Goes to next source image (if there is a space for it)
         n += 1
 
     # Puts Template on top of background (when background color = b/w)
-    if tempInfo['background'] != 'o' :
-        background.paste(temp, (0,0), temp)
+    if bg_color != 'o' :
+        background.paste(template, (0, 0), template)
 
     return background
 
+
 if __name__ == "__main__" :
     home_dir = os.path.dirname(os.path.realpath(__file__))
-    temp_dir = home_dir + '\\Templates\\'
-    source_dir = home_dir + '\\Source\\'
-    memes_dir = home_dir + '\\Memes\\'
-    meme_log = home_dir + '\\Twitter\\log'
+    temp_dir = os.path.join(home_dir, 'Templates')
+    source_dir = os.path.join(home_dir, 'Source Images')
+    memes_dir = os.path.join(home_dir, 'Memes')
+    jsonFile = os.path.join(home_dir, 'sizes.json')
 
-    with open(home_dir + '\\sizes.json') as sizes:
+    with open(jsonFile) as sizes:
         jsonData = json.load(sizes)
 
     secure_random = random.SystemRandom()
 
     # Random template
-    # rand_temp = secure_random.choice(os.listdir(temp_dir))
-    rand_temp = '213.png'
+    rand_temp = secure_random.choice(os.listdir(temp_dir))
     # Get template number, eliminates file extension
     temp_num = rand_temp.split('.')[0]
     # Template Image
-    temp = Image.open(temp_dir + rand_temp)
+    temp = Image.open(os.path.join(temp_dir, rand_temp))
     # Contains background color and box sizes
     tempInfo = jsonData[temp_num]
 
     background = getBackground(temp, tempInfo)
 
-    source_imgs, meme_name = getUniqueSources(tempInfo, memes_dir)
+    source_imgs, filename = getUniqueSources(tempInfo, memes_dir)
 
-    meme = make_meme(background, source_imgs, tempInfo['boxes'])
+    meme = make_meme(background, temp, tempInfo, source_imgs)
 
     # Saves meme
-    meme.save(memes_dir + meme_name)
+    meme.save(os.path.join(memes_dir, filename))
