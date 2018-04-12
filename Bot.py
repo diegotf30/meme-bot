@@ -6,26 +6,22 @@ import os
 
 
 def getBackgroundColor(bg_info) :
-    # Black
-    if bg_info is 'b' :
-        return 0
-    # White
-    elif bg_info is 'w' :
+    if bg_info is 'w' :
         return (255, 255, 255, 0)
 
-def getBackground(temp, tempInfo) :
+def getBackground(temp) :
     # Background color
     bg_info = tempInfo['background']
-    # If we're going not going to paste over image, we make an image of just b or w
+    # If we're going not going to paste over image, we make a background filled with b/w
     if bg_info != 'o' :
         return Image.new('RGB', temp.size, getBackgroundColor(bg_info))
-    else :
-        return temp
+    # Pasting over image
+    return temp
 
-def getUniqueSources(tempInfo, memes_dir) :
+def getUniqueSources(memes_dir) :
     """
     Gets all source images to be used in template
-    (makes sure it's not a duplicated meme)"""
+    (making sure it's not a duplicated meme)"""
 
     # Counter for boxes
     n = 0
@@ -37,7 +33,7 @@ def getUniqueSources(tempInfo, memes_dir) :
             # If image is repeated, the source image is the same
             if 'repeat_prev' not in box :
                 # Random source image (e.g. '98.png')
-                rand_source = secure_random.choice(os.listdir(source_dir))
+                rand_source = random.choice(os.listdir(source_dir))
                 source_index = rand_source.split('.')[0]
             # Random source index (e.g. '98')
             source_imgs.append(source_index)
@@ -45,7 +41,7 @@ def getUniqueSources(tempInfo, memes_dir) :
             n += 1
 
         # Name for the file
-        filename = temp_num + '-' + '-'.join(source_imgs) + '.png'
+        filename = f'{temp_num}-{"-".join(source_imgs)}.png'
 
         # If meme hasn't been done before, we continue with meme-making process
         if not os.path.isfile(os.path.join(memes_dir, filename)) :
@@ -54,13 +50,11 @@ def getUniqueSources(tempInfo, memes_dir) :
     return source_imgs, filename
 
 
-def make_meme(background, template, tempInfo, source_imgs) :
-    boxes = tempInfo['boxes']
-    bg_color = tempInfo['background']
+def make_meme(background, template, source_imgs) :
     n = 0
-    while n < len(source_imgs) :
+    for box in tempInfo['boxes'] :
         # Box (Blank Area) Properties
-        size = make_tuple(boxes[n]['size'])
+        size = make_tuple(box['size'])
         size_x = size[0]
         size_y = size[1]
 
@@ -72,33 +66,28 @@ def make_meme(background, template, tempInfo, source_imgs) :
             src.thumbnail((size_x, size_y), Image.LANCZOS)
         ## Enlarge
         else :
-            hpercent = (size_y / float(src.size[1]))  # Magic pt. 1
-            wsize = int((float(src.size[0]) * float(hpercent)))  # Magic 2: The Awakening
-            src = src.resize((wsize, size_y))  # Magic 3: Revenge of the Syntax
+            hpercent = size_y / src.size[1]  # Magic pt. 1
+            wsize = int(src.size[0] * hpercent)  # Magic 2: The Awakening
+            src = src.resize(wsize, size_y)  # Magic 3: Revenge of the Syntax
 
             if src.size[0] > size_x  :
-                wpercent = (size_x / float(src.size[0]))  # Magic IV: A New Hope
-                hsize = int((float(src.size[1]) * float(wpercent)))  # Magic 5: Wrath of Fam
-                src = src.resize((size_x, hsize))  # Magic 6: The Return of the Bug
+                wpercent = size_x / src.size[0]  # Magic IV: A New Hope
+                hsize = int(src.size[1] * wpercent)  # Magic 5: Wrath of Fam
+                src = src.resize(size_x, hsize)  # Magic 6: The Return of the Bug
 
         # Coordinates of top left corner (where image is pasted)
-        top_left = make_tuple(boxes[n]['left_corner'])
-        paste_x = top_left[0]
-        paste_y = top_left[1]
+        top_left = make_tuple(box['left_corner'])
 
-        # Source Image Width
-        width = src.size[0]
-        height = src.size[1]
-        # Blank Area - Source Image Width
-        black_x = size_x - width
-        black_y = size_y - height
-        # Pastes centered Source Image in Template
-        background.paste(src, (int(paste_x + black_x / 2), int(paste_y + black_y / 2)))
+        # Blank Area - Source Image Size
+        blank_x = size_x - src.size[0]
+        blank_y = size_y - src.size[1]
+        # Pastes centered Source Image in Box
+        background.paste(src, (int(top_left[0] + blank_x / 2), int(top_left[1] + blank_y / 2)))
         # Goes to next source image (if there is a space for it)
         n += 1
 
     # Puts Template on top of background (when background color = b/w)
-    if bg_color != 'o' :
+    if tempInfo['background'] != 'o' :
         background.paste(template, (0, 0), template)
 
     return background
@@ -114,10 +103,8 @@ if __name__ == "__main__" :
     with open(jsonFile) as sizes:
         jsonData = json.load(sizes)
 
-    secure_random = random.SystemRandom()
-
     # Random template
-    rand_temp = secure_random.choice(os.listdir(temp_dir))
+    rand_temp = random.choice(os.listdir(temp_dir))
     # Get template number, eliminates file extension
     temp_num = rand_temp.split('.')[0]
     # Template Image
@@ -125,11 +112,11 @@ if __name__ == "__main__" :
     # Contains background color and box sizes
     tempInfo = jsonData[temp_num]
 
-    background = getBackground(temp, tempInfo)
+    background = getBackground(temp)
 
-    source_imgs, filename = getUniqueSources(tempInfo, memes_dir)
+    source_imgs, filename = getUniqueSources(memes_dir)
 
-    meme = make_meme(background, temp, tempInfo, source_imgs)
+    meme = make_meme(background, temp, source_imgs)
 
     # Saves meme
     meme.save(os.path.join(memes_dir, filename))
