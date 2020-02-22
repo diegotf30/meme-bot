@@ -6,7 +6,7 @@ import os
 
 
 def getBackgroundColor() :
-    if tempInfo['background'] is 'w' :
+    if tempInfo['background'] == 'w' :
         return (255, 255, 255, 0)
 
 def getBackground() :
