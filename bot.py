@@ -60,7 +60,7 @@ def make_meme(bg, template, template_info, src_imgs):
             src = src.resize((wsize, size_y))  # Magic 3: Revenge of the Syntax
 
             if src.size[0] > size_x :
-                wpercent = size_x / src.size[0]  # Magic IV: A New Hope
+                wpercent = size_x / src.size[0]  # Magic IV: A New Bug
                 hsize = int(src.size[1] * wpercent)  # Magic 5: Wrath of Fam
                 src = src.resize((size_x, hsize))  # Magic 6: The Return of the Bug
 
